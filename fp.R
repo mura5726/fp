@@ -1,3 +1,4 @@
+#windows
 install.packages("fPortfolio")
 install.packages("maptools")
 install.packages("vars")

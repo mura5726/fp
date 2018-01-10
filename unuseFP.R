@@ -14,7 +14,7 @@ setwd("C:/Users/mura5/Documents/fp")
 rm(list=ls(all=TRUE))
 
 #rewrite fportfolio
-# source("fppack.R")
+source("fppack.R")
 
 weightsBefore <- c(0.6125, 0.1325, 0.1225, 0.1325)
 weightsAfter <- c(0.35, 0.25, 0.15, 0.25)
@@ -46,11 +46,6 @@ sdB <- sd(hist$国内債券)
 sdC <- sd(hist$外国株式)
 sdD <- sd(hist$外国債券)
 
-varAA <- var(hist$国内株式)
-varBB <- var(hist$国内債券)
-varCC <- var(hist$外国株式)
-varDD <- var(hist$外国債券)
-
 cor(hist)
 
 varAB <- var(hist$国内株式, hist$国内債券)
@@ -60,16 +55,16 @@ varAC <- var(hist$国内株式, hist$外国株式)
 varBD <- var(hist$国内債券, hist$外国債券)
 varCD <- var(hist$外国株式, hist$外国債券)
 
-# sdAB <- sqrt(cor(A, B))
-# sdBC <- sqrt(var(B, C))
-# sdDA <- sqrt(var(D, A))
-# sdAC <- sqrt(var(A, C))
-# sdBD <- sqrt(var(B, D))
-# sdCD <- sqrt(var(C, D))
+sdAB <- sqrt(var(A, B))
+sdBC <- sqrt(var(B, C))
+sdDA <- sqrt(var(D, A))
+sdAC <- sqrt(var(A, C))
+sdBD <- sqrt(var(B, D))
+sdCD <- sqrt(var(C, D))
 
 beforeY <- 0.6125 * meanB + 0.1325 * meanA + 0.1225 * meanD + 0.1325 * meanC
-beforeX <-((0.6125)^2 * varBB + (0.1325)^2 * varAA + 
-             (0.1225)^2 * varDD + (0.1325)^2 * varCC + 
+beforeX <-((0.6125 * sdB)^2 + (0.1325 * sdA)^2 + 
+             (0.1225 * sdD)^2 + (0.1325 * sdC)^2 + 
              2 * 0.6125 * 0.1325 * varAB + 
              2 * 0.1325 * 0.1225 * varDA + 
              2 * 0.1325 * 0.6125 * varBC + 
@@ -78,8 +73,8 @@ beforeX <-((0.6125)^2 * varBB + (0.1325)^2 * varAA +
              2 * 0.1225 * 0.1325 * varCD)^0.5
 
 afterY <- 0.35 * meanB + 0.25 * meanA + 0.15 * meanD + 0.25 * meanC
-afterX <-((0.35)^2 * varBB + (0.25)^2 * varAA + 
-            (0.15)^2 * varDD + (0.25)^2 * varCC + 
+afterX <-((0.35 * sdB)^2 + (0.25 * sdA)^2 + 
+            (0.15 * sdD)^2 + (0.25 * sdC)^2 + 
             2 * 0.35 * 0.25 * varAB + 
             2 * 0.25 * 0.15 * varDA + 
             2 * 0.25 * 0.35 * varBC + 
@@ -87,23 +82,19 @@ afterX <-((0.35)^2 * varBB + (0.25)^2 * varAA +
             2 * 0.25 * 0.25 * varAC + 
             2 * 0.15 * 0.25 * varCD)^0.5
 
-#いこーるうぇいと
+
 beforeY <- 0.25 * meanA + 0.25 * meanB + 0.25 * meanC + 0.25 * meanD
-beforeX <-((0.25)^2 * varAA + (0.25)^2 * varBB + 
-             (0.25)^2 * varCC + (0.25)^2 * varDD + 
-             2 * 0.25 * 0.25 * varAB + 
-             2 * 0.25 * 0.25 * varBC + 
-             2 * 0.25 * 0.25 * varDA + 
-             2 * 0.25 * 0.25 * varAC + 
-             2 * 0.25 * 0.25 * varBD + 
-             2 * 0.25 * 0.25 * varCD)^0.5
+beforeX <-((0.25)^2 * sdA + (0.25)^2 * sdB + 
+             (0.25)^2 * sdC + (0.25)^2 * sdD + 
+             2 * 0.25 * 0.25 * sdAB + 
+             2 * 0.25 * 0.25 * sdBC + 
+             2 * 0.25 * 0.25 * sdDA + 
+             2 * 0.25 * 0.25 * sdAC + 
+             2 * 0.25 * 0.25 * sdBD + 
+             2 * 0.25 * 0.25 * sdCD)^0.5
 
 
 dat <- as.timeSeries(hist)
-
-dat <- cbind(dat[,2], dat[,1], dat[,4], dat[,3])
-
-source("frontierPlot1.R")
 
 ###標準偏差
 ##全期間
@@ -112,41 +103,30 @@ setNFrontierPoints(conditions) <- 100
 efficientFrontier <- portfolioFrontier(dat, conditions)
 cols <- c("magenta", "cyan", "green", "yellow", "blue", "red")
 
-frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,0.65), ylim = c(0,0.08))
+frontierPlot(efficientFrontier, pch = 19, xlim = c(0,0.65), ylim = c(0,0.08))
 
-# tailoredFrontierPlot(efficientFrontier, risk = c("Sigma"), sharpeRatio = F)
-# 
-# tailoredFrontierPlot(efficientFrontier, risk = c("Sigma"))
+tailoredFrontierPlot(efficientFrontier, risk = c("Sigma"), sharpeRatio = F)
 
-# ?tailoredFrontierPlot
+tailoredFrontierPlot(efficientFrontier, risk = c("Sigma"))
 
-points(beforeX, beforeY, col = cols[5], pch = 18, cex = 1.5)
-points(afterX, afterY, col = cols[6], pch = 18, cex = 1.5)
+?tailoredFrontierPlot
 
 singleAssetPoints(efficientFrontier, pch = 18, cex = 1.5, col = cols[1:4])
 
-labels <- c("変更前", "変更後", colnames(dat))
-legend("topleft", legend = labels, col = c(cols[5], cols[6], cols[1:4]), pch = 18)
-plot(efficientFrontier)
-
+points(beforeX, beforeY, col = cols[5], pch = 18, cex = 1.5)
+points(afterX, afterY, col = cols[6], pch = 18, cex = 1.5)
+labels <- c(colnames(dat), "変更前", "変更後")
+legend("topleft", legend = labels, col = cols, pch = 18)
 
 weightsPlot(efficientFrontier)
 
-# #全資産5%以上保有
-# weightConstraints <- c("minW[1:4] = c(0.05,0.05,0.05,0.05)")
-# efficientFrontier <- portfolioFrontier(dat, conditions, c(weightConstraints), xlab = "")
+#全資産5%以上保有
+weightConstraints <- c("minW[1:4] = c(0.05,0.05,0.05,0.05)")
+efficientFrontier <- portfolioFrontier(dat, conditions, c(weightConstraints), xlab = "")
 
 
 #CVaR
-# dat <- as.timeSeries(hist)
-
 dat <- as.timeSeries(hist)
-
-dat <- cbind(dat[,2], dat[,1], dat[,4], dat[,3])
-
-weightsBefore <- c(0.25, 0.25, 0.25, 0.25)
-weightsAfter <- c(0.25, 0.25, 0.25, 0.25)
-
 CVaRBefore <- abs(cvarRisk(dat, weightsBefore, alpha = 0.05))
 CVaRAfter  <- abs(cvarRisk(dat, weightsAfter, alpha = 0.05))
 
@@ -158,22 +138,22 @@ conditions <- portfolioSpec(list(type = "CVaR",
 setNFrontierPoints(conditions) <- 100
 efficientFrontier <- portfolioFrontier(dat, conditions)
 
-frontierPlot(efficientFrontier, pch = 18)
+frontierPlot(efficientFrontier, pch = 19)
 singleAssetPoints(efficientFrontier, pch = 18, cex = 1.5, col = cols[1:4])
 
 
 
-points(CVaRBefore, beforeY, col = cols[5], pch = 18, cex = 1.5)
-points(CVaRAfter, afterY, col = cols[6], pch = 18, cex = 1.5)
+points(CVaRBefore, beforeY, col = 1, pch = 18)
+points(CVaRAfter, afterY, col = 2, pch = 18)
 
 
-labels <- c( "変更前", "変更後", colnames(dat))
-legend("topleft", legend = labels, col = c(cols[5:6],cols[1:4]), pch = 18)
+labels <- c(colnames(dat), "変更前", "変更後")
+legend("topleft", legend = labels, col = cols, pch = 18)
 
 
 plot(efficientFrontier)
 
-0weightsPlot(efficientFrontier)
+weightsPlot(efficientFrontier)
 
 minvariancePortfolio(dat)
 

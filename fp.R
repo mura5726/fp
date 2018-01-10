@@ -30,6 +30,11 @@ hist1 <- hist[1:76, ]       #2001/4-2007/7
 hist2 <- hist[77:105, ]     #2007/8-2009/12
 hist3 <- hist[106:192, ]    #2010/1-2017/3
 
+#change hist
+##################
+hist = hist3
+##################
+
 A <- hist$国内株式
 B <- hist$国内債券
 C <- hist$外国株式
@@ -88,15 +93,15 @@ afterX <-((0.35)^2 * varBB + (0.25)^2 * varAA +
             2 * 0.15 * 0.25 * varCD)^0.5
 
 #いこーるうぇいと
-beforeY <- 0.25 * meanA + 0.25 * meanB + 0.25 * meanC + 0.25 * meanD
-beforeX <-((0.25)^2 * varAA + (0.25)^2 * varBB + 
-             (0.25)^2 * varCC + (0.25)^2 * varDD + 
-             2 * 0.25 * 0.25 * varAB + 
-             2 * 0.25 * 0.25 * varBC + 
-             2 * 0.25 * 0.25 * varDA + 
-             2 * 0.25 * 0.25 * varAC + 
-             2 * 0.25 * 0.25 * varBD + 
-             2 * 0.25 * 0.25 * varCD)^0.5
+# beforeY <- 0.25 * meanA + 0.25 * meanB + 0.25 * meanC + 0.25 * meanD
+# beforeX <-((0.25)^2 * varAA + (0.25)^2 * varBB + 
+#              (0.25)^2 * varCC + (0.25)^2 * varDD + 
+#              2 * 0.25 * 0.25 * varAB + 
+#              2 * 0.25 * 0.25 * varBC + 
+#              2 * 0.25 * 0.25 * varDA + 
+#              2 * 0.25 * 0.25 * varAC + 
+#              2 * 0.25 * 0.25 * varBD + 
+#              2 * 0.25 * 0.25 * varCD)^0.5
 
 
 dat <- as.timeSeries(hist)
@@ -112,7 +117,14 @@ setNFrontierPoints(conditions) <- 100
 efficientFrontier <- portfolioFrontier(dat, conditions)
 cols <- c("magenta", "cyan", "green", "yellow", "blue", "red")
 
-frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,0.65), ylim = c(0,0.08))
+frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,1), ylim = c(0,0.1))
+frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19)
+
+#for hist1
+# frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,0.55))
+
+#for hist3
+# frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, ylim = c(-0.02,0.15))
 
 # tailoredFrontierPlot(efficientFrontier, risk = c("Sigma"), sharpeRatio = F)
 # 
@@ -127,10 +139,10 @@ singleAssetPoints(efficientFrontier, pch = 18, cex = 1.5, col = cols[1:4])
 
 labels <- c("変更前", "変更後", colnames(dat))
 legend("topleft", legend = labels, col = c(cols[5], cols[6], cols[1:4]), pch = 18)
-plot(efficientFrontier)
+# plot(efficientFrontier)
 
 
-weightsPlot(efficientFrontier)
+# weightsPlot(efficientFrontier)
 
 # #全資産5%以上保有
 # weightConstraints <- c("minW[1:4] = c(0.05,0.05,0.05,0.05)")
@@ -144,8 +156,9 @@ dat <- as.timeSeries(hist)
 
 dat <- cbind(dat[,2], dat[,1], dat[,4], dat[,3])
 
-weightsBefore <- c(0.25, 0.25, 0.25, 0.25)
-weightsAfter <- c(0.25, 0.25, 0.25, 0.25)
+# EW
+# weightsBefore <- c(0.25, 0.25, 0.25, 0.25)
+# weightsAfter <- c(0.25, 0.25, 0.25, 0.25)
 
 CVaRBefore <- abs(cvarRisk(dat, weightsBefore, alpha = 0.05))
 CVaRAfter  <- abs(cvarRisk(dat, weightsAfter, alpha = 0.05))
@@ -154,11 +167,13 @@ conditions <- portfolioSpec(list(type = "CVaR",
                                  optimize = "minRisk",
                                  estimator = "covEstimator",
                                  tailRisk = list(),
-                                 params = list(alpha = 0.05)))
+                                 params = list(alpha = 0.04)))
 setNFrontierPoints(conditions) <- 100
 efficientFrontier <- portfolioFrontier(dat, conditions)
 
-frontierPlot(efficientFrontier, pch = 18)
+frontierPlot(efficientFrontier, pch = 19, xlim = c(0,1.4), ylim = c(0,0.1))
+frontierPlot(efficientFrontier, pch = 19)
+
 singleAssetPoints(efficientFrontier, pch = 18, cex = 1.5, col = cols[1:4])
 
 
@@ -170,10 +185,10 @@ points(CVaRAfter, afterY, col = cols[6], pch = 18, cex = 1.5)
 labels <- c( "変更前", "変更後", colnames(dat))
 legend("topleft", legend = labels, col = c(cols[5:6],cols[1:4]), pch = 18)
 
+###################################################################################
+# plot(efficientFrontier)
 
-plot(efficientFrontier)
-
-0weightsPlot(efficientFrontier)
+# weightsPlot(efficientFrontier)
 
 minvariancePortfolio(dat)
 

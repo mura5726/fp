@@ -23,7 +23,7 @@ weightsAfter <- c(0.35, 0.25, 0.15, 0.25)
 #各ポートフォリオの平均分散算出
 history <- read.csv("history.csv", header = TRUE)
 hist <- history[, -1]
-hist <- hist * 12
+hist <- hist * 12 * 100
 
 #期間をわける
 # hist1 <- hist[1:76, ]       #2001/4-2007/7
@@ -38,9 +38,10 @@ hist3 <- hist[101:192, ]    #2010/8-2017/3
 
 #change hist
 ##################
-# hist = hist
+hist = hist3
 ##################
 
+#############################
 A <- hist$国内株式
 B <- hist$国内債券
 C <- hist$外国株式
@@ -109,6 +110,7 @@ afterX <-((0.35)^2 * varBB + (0.25)^2 * varAA +
 #              2 * 0.25 * 0.25 * varBD + 
 #              2 * 0.25 * 0.25 * varCD)^0.5
 
+#############################
 
 dat <- as.timeSeries(hist)
 
@@ -116,6 +118,7 @@ dat <- cbind(dat[,2], dat[,1], dat[,4], dat[,3])
 
 source("frontierPlot1.R")
 
+##############################################################################################
 ###標準偏差
 ##全期間
 conditions <- portfolioSpec()
@@ -123,14 +126,20 @@ setNFrontierPoints(conditions) <- 100
 efficientFrontier <- portfolioFrontier(dat, conditions)
 cols <- c("magenta", "cyan", "green", "yellow", "blue", "red")
 
-frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,1), ylim = c(0,0.1))
+# frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,1), ylim = c(0,0.1))
 frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19)
 
+#for hist
+# frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,70))
+
 #for hist1
-# frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,0.55))
+# frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,60))
+
+#for hist2
+# frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(-30,90))
 
 #for hist3
-# frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, ylim = c(-0.02,0.15))
+frontierPlot1(efficientFrontier, risk = c("Sigma"), pch = 19, xlim = c(0,70))
 
 # tailoredFrontierPlot(efficientFrontier, risk = c("Sigma"), sharpeRatio = F)
 # 
@@ -145,6 +154,8 @@ singleAssetPoints(efficientFrontier, pch = 18, cex = 1.5, col = cols[1:4])
 
 labels <- c("変更前", "変更後", colnames(dat))
 legend("topleft", legend = labels, col = c(cols[5], cols[6], cols[1:4]), pch = 18)
+title(main = "", xlab = "標準偏差(%)", ylab = "年率平均リターン(%)")
+
 # plot(efficientFrontier)
 
 
@@ -154,8 +165,11 @@ legend("topleft", legend = labels, col = c(cols[5], cols[6], cols[1:4]), pch = 1
 # weightConstraints <- c("minW[1:4] = c(0.05,0.05,0.05,0.05)")
 # efficientFrontier <- portfolioFrontier(dat, conditions, c(weightConstraints), xlab = "")
 
+##############################################################################################
 
 #CVaR
+source("frontierPlot2.R")
+
 # dat <- as.timeSeries(hist)
 
 dat <- as.timeSeries(hist)
@@ -177,8 +191,11 @@ conditions <- portfolioSpec(list(type = "CVaR",
 setNFrontierPoints(conditions) <- 100
 efficientFrontier <- portfolioFrontier(dat, conditions)
 
-frontierPlot(efficientFrontier, pch = 19, xlim = c(0,1.4), ylim = c(0,0.1))
-frontierPlot(efficientFrontier, pch = 19)
+# frontierPlot2(efficientFrontier, pch = 19, xlim = c(0,1.4), ylim = c(0,0.1))
+# for hist
+frontierPlot2(efficientFrontier, pch = 19, xlim = c(0,120))
+
+#
 
 singleAssetPoints(efficientFrontier, pch = 18, cex = 1.5, col = cols[1:4])
 
@@ -190,6 +207,7 @@ points(CVaRAfter, afterY, col = cols[6], pch = 18, cex = 1.5)
 
 labels <- c( "変更前", "変更後", colnames(dat))
 legend("topleft", legend = labels, col = c(cols[5:6],cols[1:4]), pch = 18)
+title(main = "", xlab = "標準偏差(%)", ylab = "年率平均リターン(%)")
 
 ###################################################################################
 # plot(efficientFrontier)

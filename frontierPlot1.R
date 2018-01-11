@@ -120,9 +120,10 @@ frontierPlot1 <- function (object, frontier = c("both", "lower", "upper"), col =
   }
   if (title) {
     labs = attr(fullFrontier, "control")
-    title(main = "Efficient Frontier", xlab = paste("Target Risk[", 
-                                                    "Sigma", "]", sep = ""), ylab = paste("Target Return[", 
-                                                                                          labs[2], "]", sep = ""))
+    # title(main = "Efficient Frontier", xlab = paste("Target Risk[", 
+    #                                                 "Sigma", "]", sep = ""), ylab = paste("Target Return[", 
+    #                                                                                       labs[2], "]", sep = ""))
+    # title(main = "", xlab = "標準偏差(%)", ylab = "年率平均リターン(%)")
   }
   mtext("Rmetrics", adj = 0, side = 4, cex = 0.7, col = "darkgrey")
   invisible(fullFrontier)

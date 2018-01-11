@@ -12,20 +12,20 @@ hist <- hist * 12
 hist1 <- hist[1:76, ]       #2001/4-2007/7
 hist2 <- hist[77:105, ]     #2007/8-2009/12
 hist3 <- hist[106:192, ]    #2010/1-2017/3
-
-hist_list = list(hist,hist1,hist2,hist3)
+hist1plus3 <- rbind(hist[1:76, ],hist[106:192, ])
+hist_list = list(hist,hist1,hist2,hist3,hist1plus3)
 
 #change hist
 ##################
 # hist = hist3
 ##################
 
-SigmaPara = matrix(0,4,4)
-colnames(SigmaPara) = c("ALL","1","2","3")
+SigmaPara = matrix(0,4,5)
+colnames(SigmaPara) = c("ALL","1","2","3","1+3")
 rownames(SigmaPara) = c("Sigma_beforeY","Sigma_beforeX","Sigma_afterY","Sigma_afterX")
 
-CVaRPara = matrix(0,4,4)
-colnames(CVaRPara) = c("ALL","1","2","3")
+CVaRPara = matrix(0,4,5)
+colnames(CVaRPara) = c("ALL","1","2","3","1+3")
 rownames(CVaRPara) = c("CVaR_beforeY","CVaR_beforeX","CVaR_afterY","CVaR_afterX")
 
 
@@ -34,7 +34,7 @@ rownames(CVaRPara) = c("CVaR_beforeY","CVaR_beforeX","CVaR_afterY","CVaR_afterX"
 #Sigma
 
 getSigmaPara = function(x){
-  for(i in 1:4){
+  for(i in 1:5){
   
     hist = x[[i]]
     
@@ -111,7 +111,7 @@ getSigmaPara = function(x){
 # wa = weightsAfter
 
 getCVaRPara = function(x, wb, wa){
-  for(i in 1:4){
+  for(i in 1:5){
     # i = 2
     hist = x[[i]]
     
@@ -172,8 +172,8 @@ getCVaRPara = function(x, wb, wa){
     #             2 * 0.25 * 0.25 * varAC + 
     #             2 * 0.15 * 0.25 * varCD)^0.5
     # 
-    CVaRBefore <- abs(cvarRisk(dat, wb, alpha = 0.05))
-    CVaRAfter  <- abs(cvarRisk(dat, wa, alpha = 0.05))
+    CVaRBefore <- abs(cvarRisk(hist, wb, alpha = 0.05))
+    CVaRAfter  <- abs(cvarRisk(hist, wa, alpha = 0.05))
 
     
     CVaRPara[,i] = c(beforeY,CVaRBefore,afterY,CVaRAfter)

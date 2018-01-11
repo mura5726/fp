@@ -7,13 +7,13 @@ weightsAfter <- c(0.35, 0.25, 0.15, 0.25)
 #各ポートフォリオの平均分散算出
 history <- read.csv("history.csv", header = TRUE)
 hist <- history[, -1]
-hist <- hist * 12
+hist <- hist * 12 * 100
 
 dat <- as.timeSeries(hist)
 
 dat <- cbind(dat[,2], dat[,1], dat[,4], dat[,3])
 
-head(dat)
+# head(dat)
 
 # #期間をわける
 # dat1 <- dat[1:76, ]       #2001/4-2007/7

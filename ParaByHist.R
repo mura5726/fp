@@ -1,6 +1,7 @@
+
+# miss weights
 weightsBefore <- c(0.6125, 0.1325, 0.1225, 0.1325)
 weightsAfter <- c(0.35, 0.25, 0.15, 0.25)
-
 
 #fPortfolio
 #各ポートフォリオの平均分散算出
@@ -8,12 +9,24 @@ history <- read.csv("history.csv", header = TRUE)
 hist <- history[, -1]
 hist <- hist * 12
 
-#期間をわける
-hist1 <- hist[1:76, ]       #2001/4-2007/7
-hist2 <- hist[77:105, ]     #2007/8-2009/12
-hist3 <- hist[106:192, ]    #2010/1-2017/3
-hist1plus3 <- rbind(hist[1:76, ],hist[106:192, ])
-hist_list = list(hist,hist1,hist2,hist3,hist1plus3)
+dat <- as.timeSeries(hist)
+
+dat <- cbind(dat[,2], dat[,1], dat[,4], dat[,3])
+
+head(dat)
+
+# #期間をわける
+# dat1 <- dat[1:76, ]       #2001/4-2007/7
+# dat2 <- dat[77:105, ]     #2007/8-2009/12
+# dat3 <- dat[106:192, ]    #2010/1-2017/3
+
+#期間をわける(Var.2)
+dat1 <- dat[1:76, ]       #2001/4-2007/7
+dat2 <- dat[77:100, ]     #2007/8-2009/7
+dat3 <- dat[101:192, ]    #2010/8-2017/3
+
+dat1plus3 <- rbind(dat1,dat3)
+dat_list = list(dat,dat1,dat2,dat3,dat1plus3)
 
 #change hist
 ##################
@@ -182,11 +195,11 @@ getCVaRPara = function(x, wb, wa){
   return(CVaRPara)
 }
 
-getSigmaPara(hist_list)
-getCVaRPara(hist_list, weightsBefore, weightsAfter)
+getSigmaPara(dat_list)
+getCVaRPara(dat_list, weightsBefore, weightsAfter)
 
 #writecsv
 
-write.csv(getSigmaPara(hist_list),"SigmaPara.csv")
-write.csv(getCVaRPara(hist_list, weightsBefore, weightsAfter),"CVaRPara.csv")
+write.csv(getSigmaPara(dat_list),"SigmaPara.csv")
+write.csv(getCVaRPara(dat_list, weightsBefore, weightsAfter),"CVaRPara.csv")
 

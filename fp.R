@@ -26,13 +26,19 @@ hist <- history[, -1]
 hist <- hist * 12
 
 #期間をわける
+# hist1 <- hist[1:76, ]       #2001/4-2007/7
+# hist2 <- hist[77:105, ]     #2007/8-2009/12
+# hist3 <- hist[106:192, ]    #2010/1-2017/3
+
+#期間をわける(Var.2)
 hist1 <- hist[1:76, ]       #2001/4-2007/7
-hist2 <- hist[77:105, ]     #2007/8-2009/12
-hist3 <- hist[106:192, ]    #2010/1-2017/3
+hist2 <- hist[77:100, ]     #2007/8-2009/7
+hist3 <- hist[101:192, ]    #2010/8-2017/3
+
 
 #change hist
 ##################
-hist = hist3
+# hist = hist
 ##################
 
 A <- hist$国内株式
@@ -192,41 +198,55 @@ legend("topleft", legend = labels, col = c(cols[5:6],cols[1:4]), pch = 18)
 
 minvariancePortfolio(dat)
 
-#LPM
-dat <- as.timeSeries(hist)
-weightsBefore <- c(0.1325, 0.6125, 0.1325, 0.1225)
-weightsAfter <- c(0.25, 0.35, 0.25, 0.15)
-LPMBefore <- abs(cvarRisk(dat, weightsBefore, alpha = 0.05))
-LPMAfter  <- abs(cvarRisk(dat, weightsAfter, alpha = 0.05))
 
-conditions <- portfolioSpec(model = list(type = "LPM",
-                                         optimize = "minRisk",
-                                         estimator = "lpmEstimator",
-                                         params = list(alpha = 0.05, a = 2)),
-                            portfolio = list(weights = NULL,
-                                             targetReturn = .038))
-setNFrontierPoints(conditions) <- 100
-efficientFrontier <- portfolioFrontier(dat, conditions)
-# efficientFrontier <- portfolioFrontier(dat, portfolioSpec())
+return = dat%*%weightsBefore
+colnames(return) = "return"
+# par(las=1, xaxs="i", yaxs="i", cex.main=3, cex.lab=1.1, cex.axis=1.1)
+# par(las=1, family="Century gothic", xaxs="i", yaxs="i", cex.main=3, cex.lab=1.1, cex.axis=1.1, font.lab=2, font.axis=2)
+# hist(return[return>-0.5],breaks=seq(-1,1,0.05), xlab="return", ylim=c(0,45), col="#993435")
+# box()
+# hist(return[return<-0.5],breaks=seq(-1,1,0.05), xlab="return", ylim=c(0,45), col="#edae00", add=T)
 
-frontierPlot(efficientFrontier, pch = 19, risk = c("Sigma"))
-# tailoredFrontierPlot(efficientFrontier, pch = 19, risk = c("Sigma"))
+hist1 <- hist(return[return>(-0.5)], col ="#0000ff40" , border = "#ff00ff", breaks = seq(-1,1,0.05),main ="hist of return",xlab ="return",cex.main=2)
+hist1 <- hist(return[return<(-0.5)], col ="#ff00ff40" , border = "#0000ff", breaks = seq(-1,1,0.05),add = T)
+abline(v = -0.5, lty = 2)
 
-singleAssetPoints(efficientFrontier, pch = 18, cex = 1.5, col = cols[1:4])
-
-points(CVaRBefore, beforeY, col = 1, pch = 18)
-points(CVaRAfter, afterY, col = 2, pch = 18)
-
-
-labels <- c(colnames(dat), "変更前", "変更後")
-legend("topleft", legend = labels, col = cols, pch = 18)
-
-plot(efficientFrontier, 4)
-
-points(CVaRBefore, beforeY, col = 1, pch = 18)
-points(CVaRAfter, afterY, col = 2, pch = 18)
-labels <- c(colnames(dat), "変更前", "変更後")
-legend("topleft", legend = labels, col = cols, pch = 18)
+hist(return[return<(-0.5)])
+# #LPM
+# dat <- as.timeSeries(hist)
+# weightsBefore <- c(0.1325, 0.6125, 0.1325, 0.1225)
+# weightsAfter <- c(0.25, 0.35, 0.25, 0.15)
+# LPMBefore <- abs(cvarRisk(dat, weightsBefore, alpha = 0.05))
+# LPMAfter  <- abs(cvarRisk(dat, weightsAfter, alpha = 0.05))
+# 
+# conditions <- portfolioSpec(model = list(type = "LPM",
+#                                          optimize = "minRisk",
+#                                          estimator = "lpmEstimator",
+#                                          params = list(alpha = 0.05, a = 2)),
+#                             portfolio = list(weights = NULL,
+#                                              targetReturn = .038))
+# setNFrontierPoints(conditions) <- 100
+# efficientFrontier <- portfolioFrontier(dat, conditions)
+# # efficientFrontier <- portfolioFrontier(dat, portfolioSpec())
+# 
+# frontierPlot(efficientFrontier, pch = 19, risk = c("Sigma"))
+# # tailoredFrontierPlot(efficientFrontier, pch = 19, risk = c("Sigma"))
+# 
+# singleAssetPoints(efficientFrontier, pch = 18, cex = 1.5, col = cols[1:4])
+# 
+# points(CVaRBefore, beforeY, col = 1, pch = 18)
+# points(CVaRAfter, afterY, col = 2, pch = 18)
+# 
+# 
+# labels <- c(colnames(dat), "変更前", "変更後")
+# legend("topleft", legend = labels, col = cols, pch = 18)
+# 
+# plot(efficientFrontier, 4)
+# 
+# points(CVaRBefore, beforeY, col = 1, pch = 18)
+# points(CVaRAfter, afterY, col = 2, pch = 18)
+# labels <- c(colnames(dat), "変更前", "変更後")
+# legend("topleft", legend = labels, col = cols, pch = 18)
 
 
 
